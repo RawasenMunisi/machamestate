@@ -115,8 +115,10 @@ a{ color:inherit; text-decoration:none; }
   align-items:center;
   gap: 12px;
   margin-right: auto;
+  min-width:0;
+  flex-shrink:1;
 }
-.brand-logo{ height: 80px; width:auto; display:block; }
+.brand-logo{ max-height: 80px; width:auto; max-width: 100%; display:block; }
 .logo-light{ display:none; }
 html[data-theme="light"] .logo-dark{ display:none; }
 html[data-theme="light"] .logo-light{ display:block; }
@@ -218,7 +220,7 @@ html[data-theme="light"] .footer-brand img.logo-light{ display:block; }
 @media (max-width: 900px){
   .main-nav{
     position:absolute;
-    top: 122px; left:0; right:0;
+    top: 76px; left:0; right:0;
     background: var(--header-grey);
     flex-direction:column;
     align-items:flex-start;
@@ -230,6 +232,8 @@ html[data-theme="light"] .footer-brand img.logo-light{ display:block; }
   .main-nav a{ padding: 10px 0; border-bottom:none; width:100%; }
   .track-btn .label{ display:none; }
   .nav-toggle{ display:flex; }
+  .site-header .wrap{ height: 76px; gap: 12px; }
+  .brand-logo{ max-height: 44px; }
 }
 
 /* ---------- Hero ---------- */

@@ -34,18 +34,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ---- Fleet showcase arrows ---- */
-  const fleetScroll = document.getElementById('fleetScroll');
+  /* ---- Fleet showcase: single-slide carousel ---- */
+  const fleetViewport = document.getElementById('fleetViewport');
+  const fleetTrack = document.getElementById('fleetTrack');
   const fleetPrev = document.getElementById('fleetPrev');
   const fleetNext = document.getElementById('fleetNext');
-  if (fleetScroll && fleetPrev && fleetNext) {
-    const step = () => {
-      const item = fleetScroll.querySelector('.fleet-item');
-      const gap = parseFloat(getComputedStyle(fleetScroll).gap) || 18;
-      return item ? item.getBoundingClientRect().width + gap : 300;
-    };
-    fleetPrev.addEventListener('click', () => fleetScroll.scrollBy({ left: -step(), behavior: 'smooth' }));
-    fleetNext.addEventListener('click', () => fleetScroll.scrollBy({ left: step(), behavior: 'smooth' }));
+  const fleetDotsWrap = document.getElementById('fleetDots');
+  if (fleetViewport && fleetTrack && fleetPrev && fleetNext && fleetDotsWrap) {
+    const slides = Array.from(fleetTrack.children);
+    const count = slides.length;
+    let index = 0;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'fleet-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Nenda picha ' + (i + 1));
+      dot.addEventListener('click', () => goTo(i));
+      fleetDotsWrap.appendChild(dot);
+    });
+    const dots = Array.from(fleetDotsWrap.children);
+
+    function render() {
+      fleetTrack.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+    function goTo(i) {
+      index = (i + count) % count;
+      render();
+    }
+    fleetPrev.addEventListener('click', () => goTo(index - 1));
+    fleetNext.addEventListener('click', () => goTo(index + 1));
+
+    /* touch / drag swipe */
+    let startX = 0, isDragging = false;
+    fleetViewport.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+    });
+    fleetViewport.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const delta = e.clientX - startX;
+      if (delta > 40) goTo(index - 1);
+      else if (delta < -40) goTo(index + 1);
+    });
+    fleetViewport.addEventListener('pointercancel', () => { isDragging = false; });
+
+    render();
   }
 
   /* ---- Footer year ---- */

@@ -377,7 +377,7 @@ section{ padding: 80px 0; }
   display:flex;
   align-items:center;
   justify-content:center;
-  background: var(--ink-soft);
+  background: var(--orange);
   overflow:hidden;
 }
 .fleet-item .photo-wrap img{

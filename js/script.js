@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const dot = document.createElement('button');
       dot.className = 'fleet-dot' + (i === 0 ? ' active' : '');
       dot.setAttribute('aria-label', 'Nenda picha ' + (i + 1));
-      dot.addEventListener('click', () => goTo(i));
       fleetDotsWrap.appendChild(dot);
     });
     const dots = Array.from(fleetDotsWrap.children);
@@ -62,8 +61,34 @@ document.addEventListener('DOMContentLoaded', () => {
       index = (i + count) % count;
       render();
     }
-    fleetPrev.addEventListener('click', () => goTo(index - 1));
-    fleetNext.addEventListener('click', () => goTo(index + 1));
+
+    /* autoplay */
+    const AUTOPLAY_MS = 4500;
+    let autoplayTimer = null;
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = setInterval(() => goTo(index + 1), AUTOPLAY_MS);
+    }
+    function stopAutoplay() {
+      if (autoplayTimer) clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+    function restartAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    fleetPrev.addEventListener('click', () => { goTo(index - 1); restartAutoplay(); });
+    fleetNext.addEventListener('click', () => { goTo(index + 1); restartAutoplay(); });
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => { goTo(i); restartAutoplay(); });
+    });
+
+    fleetViewport.addEventListener('mouseenter', stopAutoplay);
+    fleetViewport.addEventListener('mouseleave', startAutoplay);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAutoplay(); else startAutoplay();
+    });
 
     /* touch / drag swipe */
     let startX = 0, isDragging = false;
@@ -75,12 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isDragging) return;
       isDragging = false;
       const delta = e.clientX - startX;
-      if (delta > 40) goTo(index - 1);
-      else if (delta < -40) goTo(index + 1);
+      if (delta > 40) { goTo(index - 1); restartAutoplay(); }
+      else if (delta < -40) { goTo(index + 1); restartAutoplay(); }
     });
     fleetViewport.addEventListener('pointercancel', () => { isDragging = false; });
 
     render();
+    startAutoplay();
   }
 
   /* ---- Footer year ---- */

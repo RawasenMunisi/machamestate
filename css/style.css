@@ -368,16 +368,34 @@ section{ padding: 80px 0; }
   overflow:hidden;
   flex:0 0 100%;
   height:480px;
-  background: var(--ink-soft);
+  display:flex;
+  flex-direction:column;
+}
+.fleet-item .photo-wrap{
+  flex:1;
+  min-height:0;
   display:flex;
   align-items:center;
   justify-content:center;
+  background: var(--ink-soft);
+  overflow:hidden;
 }
-.fleet-item img{
+.fleet-item .photo-wrap img{
   width:100%;
   height:100%;
   object-fit:contain;
   display:block;
+}
+.fleet-item .caption{
+  flex:0 0 auto;
+  background: var(--orange);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight:600;
+  font-size:17px;
+  line-height:1.3;
+  text-align:center;
+  padding:18px 26px;
 }
 .fleet-arrow{
   position:absolute; top:50%; transform:translateY(-50%);
@@ -409,6 +427,7 @@ html[data-theme="light"] .fleet-arrow{ background: rgba(255,255,255,0.8); color:
 .fleet-dot.active{ background: var(--orange); width:22px; border-radius:4px; }
 @media (max-width: 900px){
   .fleet-item{ height: 320px; }
+  .fleet-item .caption{ font-size:14px; padding:14px 18px; }
   .fleet-arrow{ width:40px; height:40px; }
   .fleet-arrow svg{ width:17px; height:17px; }
 }

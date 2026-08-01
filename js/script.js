@@ -34,6 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ---- Fleet showcase arrows ---- */
+  const fleetScroll = document.getElementById('fleetScroll');
+  const fleetPrev = document.getElementById('fleetPrev');
+  const fleetNext = document.getElementById('fleetNext');
+  if (fleetScroll && fleetPrev && fleetNext) {
+    const step = () => {
+      const item = fleetScroll.querySelector('.fleet-item');
+      const gap = parseFloat(getComputedStyle(fleetScroll).gap) || 18;
+      return item ? item.getBoundingClientRect().width + gap : 300;
+    };
+    fleetPrev.addEventListener('click', () => fleetScroll.scrollBy({ left: -step(), behavior: 'smooth' }));
+    fleetNext.addEventListener('click', () => fleetScroll.scrollBy({ left: step(), behavior: 'smooth' }));
+  }
+
   /* ---- Footer year ---- */
   const yearEls = document.querySelectorAll('.year, #year');
   const currentYear = new Date().getFullYear();

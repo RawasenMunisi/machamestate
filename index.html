@@ -57,8 +57,18 @@
     <div class="route-map">
       <div class="route-track">
         <svg class="route-line-svg" viewBox="0 0 1000 90" preserveAspectRatio="none">
-          <path class="route-path" d="M20,45 C 250,10 450,80 520,45 C 620,5 780,85 980,45" />
+          <path id="routeCurve" class="route-path" d="M20,45 C 250,10 450,80 520,45 C 620,5 780,85 980,45" />
           <path class="route-progress" d="M20,45 C 250,10 450,80 520,45 C 620,5 780,85 980,45" pathLength="900"/>
+          <g class="route-truck">
+            <rect x="-9" y="-8" width="13" height="8" rx="1.4"></rect>
+            <path d="M4,-8 h4.5 l4,4.3 v3.7 h-8.5 z"></path>
+            <rect x="6.4" y="-5.6" width="3.2" height="2.6" rx="0.4" class="window"></rect>
+            <circle cx="-5" cy="0.6" r="2.1"></circle>
+            <circle cx="6" cy="0.6" r="2.1"></circle>
+            <animateMotion dur="7s" begin="0.4s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+              <mpath href="#routeCurve" xlink:href="#routeCurve"></mpath>
+            </animateMotion>
+          </g>
         </svg>
       </div>
       <div class="route-labels">
@@ -80,31 +90,39 @@
       <p class="eyebrow" data-i18n-en="Our Fleet">Fleet Yetu</p>
       <h2 data-i18n-en="Built for the road ahead.">Iliyojengwa kwa safari ndefu.</h2>
     </div>
-    <div class="fleet-grid reveal">
-      <div class="fleet-item big">
-        <img src="assets/fleet/fleet-semi-truck.jpg" alt="MASCOL branded long-haul semi truck">
-        <div class="tag"><span>MSC</span> — Long Haul Fleet</div>
+    <div class="fleet-scroll-wrap reveal">
+      <button class="fleet-arrow prev" id="fleetPrev" aria-label="Iliyotangulia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div class="fleet-grid" id="fleetScroll">
+        <div class="fleet-item big">
+          <img src="assets/fleet/fleet-semi-truck.jpg" alt="MASCOL branded long-haul semi truck">
+          <div class="tag"><span>MSC</span> Long Haul Fleet</div>
+        </div>
+        <div class="fleet-item">
+          <img src="assets/fleet/fleet-box-truck.jpg" alt="MASCOL branded box truck">
+          <div class="tag"><span>MSC</span> Distribution</div>
+        </div>
+        <div class="fleet-item">
+          <img src="assets/fleet/fleet-sprinter-van.jpg" alt="MASCOL branded sprinter van">
+          <div class="tag"><span>MSC</span> City Delivery</div>
+        </div>
+        <div class="fleet-item">
+          <img src="assets/fleet/fleet-pickup-hilux.jpg" alt="MASCOL branded pickup truck">
+          <div class="tag"><span>MSC</span> Local Delivery</div>
+        </div>
+        <div class="fleet-item">
+          <img src="assets/fleet/fleet-minibus.jpg" alt="MASCOL branded minibus">
+          <div class="tag"><span>MSC</span> Light Fleet</div>
+        </div>
+        <div class="fleet-item">
+          <img src="assets/fleet/team-uniform.jpg" alt="MASCOL team member">
+          <div class="tag"><span>MSC</span> Our Team</div>
+        </div>
       </div>
-      <div class="fleet-item">
-        <img src="assets/fleet/fleet-box-truck.jpg" alt="MASCOL branded box truck">
-        <div class="tag"><span>MSC</span> — Distribution</div>
-      </div>
-      <div class="fleet-item">
-        <img src="assets/fleet/fleet-sprinter-van.jpg" alt="MASCOL branded sprinter van">
-        <div class="tag"><span>MSC</span> — City Delivery</div>
-      </div>
-      <div class="fleet-item">
-        <img src="assets/fleet/fleet-pickup-hilux.jpg" alt="MASCOL branded pickup truck">
-        <div class="tag"><span>MSC</span> — Local Delivery</div>
-      </div>
-      <div class="fleet-item">
-        <img src="assets/fleet/fleet-minibus.jpg" alt="MASCOL branded minibus">
-        <div class="tag"><span>MSC</span> — Light Fleet</div>
-      </div>
-      <div class="fleet-item">
-        <img src="assets/fleet/team-uniform.jpg" alt="MASCOL team member">
-        <div class="tag"><span>MSC</span> — Our Team</div>
-      </div>
+      <button class="fleet-arrow next" id="fleetNext" aria-label="Inayofuata">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </div>
   </div>
 </section>

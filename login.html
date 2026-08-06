@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingia — MASCOL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg-deep:#0B0D12;
+    --bg-panel:#14171F;
+    --line:#232733;
+    --orange:#FF6A1A;
+    --orange-dim:rgba(255,106,26,0.12);
+    --text-primary:#F2F3F5;
+    --text-muted:#8890A0;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--bg-deep);
+    color:var(--text-primary);
+    font-family:'Space Grotesk', sans-serif;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  /* route-line ambient background */
+  body::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 15% 20%, var(--orange-dim), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(255,106,26,0.08), transparent 40%);
+    pointer-events:none;
+  }
+  .route-dash{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; opacity:0.35;
+  }
+  .route-dash svg{ width:100%; height:100%; }
+  .route-dash path{
+    stroke:var(--orange); stroke-width:1.5; fill:none;
+    stroke-dasharray:6 10;
+    animation:dash 40s linear infinite;
+  }
+  @keyframes dash{ to{ stroke-dashoffset:-1000; } }
+
+  .card{
+    position:relative; z-index:1;
+    width:380px; max-width:100%;
+    background:linear-gradient(160deg, var(--bg-panel) 0%, #10131A 100%);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:36px 32px 30px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,106,26,0.06);
+  }
+  .card::before{
+    content:''; position:absolute; top:0; left:20px; right:20px; height:2px;
+    background:linear-gradient(90deg, transparent, var(--orange), transparent);
+    border-radius:0 0 3px 3px;
+  }
+
+  .brand{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .brand-mark{
+    width:28px; height:28px; border-radius:7px;
+    background:var(--orange);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:13px;
+    color:#0B0D12;
+  }
+  .brand-name{ font-weight:700; font-size:16px; letter-spacing:0.02em; }
+  .brand-sub{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--text-muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:28px; }
+
+  h1{ font-size:22px; font-weight:700; margin-bottom:4px; }
+  .subtitle{ color:var(--text-muted); font-size:13px; margin-bottom:26px; }
+
+  .tabs{ display:flex; gap:4px; background:var(--bg-deep); border:1px solid var(--line); border-radius:10px; padding:4px; margin-bottom:22px; }
+  .tab{
+    flex:1; text-align:center; padding:9px 0; border-radius:7px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--text-muted); cursor:pointer; transition:all 0.2s ease; border:none; background:none;
+  }
+  .tab.active{ background:var(--orange); color:#0B0D12; font-weight:600; }
+
+  form{ display:flex; flex-direction:column; gap:14px; }
+  form.hidden{ display:none; }
+
+  .field label{ display:block; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+  .field input{
+    width:100%; background:var(--bg-deep); border:1px solid var(--line); border-radius:8px;
+    padding:11px 13px; color:var(--text-primary); font-family:'Space Grotesk', sans-serif; font-size:14px;
+    outline:none; transition:border-color 0.2s ease;
+  }
+  .field input:focus{ border-color:var(--orange); }
+
+  button.submit{
+    margin-top:8px;
+    background:var(--orange); color:#0B0D12; border:none; border-radius:8px;
+    padding:12px 0; font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:14px;
+    cursor:pointer; transition:background 0.2s ease, transform 0.1s ease;
+  }
+  button.submit:hover{ background:#FF7E38; }
+  button.submit:active{ transform:scale(0.98); }
+  button.submit:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  .msg{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    padding:10px 12px; border-radius:7px; display:none; margin-top:2px;
+  }
+  .msg.error{ display:block; background:rgba(255,80,60,0.1); color:#FF6B5A; border:1px solid rgba(255,80,60,0.25); }
+  .msg.success{ display:block; background:rgba(80,220,140,0.1); color:#4ED890; border:1px solid rgba(80,220,140,0.25); }
+
+  .back{
+    display:block; text-align:center; margin-top:22px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-muted);
+    text-decoration:none; border-bottom:1px dotted transparent; transition:color 0.2s ease;
+  }
+  .back:hover{ color:var(--orange); border-color:var(--orange); }
+</style>
+</head>
+<body>
+
+<div class="route-dash">
+  <svg viewBox="0 0 400 400" preserveAspectRatio="none">
+    <path d="M -50 350 Q 100 250 200 300 T 450 100"/>
+  </svg>
+</div>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <div class="brand-name">MASCOL</div>
+  </div>
+  <div class="brand-sub">Machame State Company Ltd</div>
+
+  <h1 id="heading">Karibu tena</h1>
+  <p class="subtitle" id="subheading">Ingia kufuatilia mizigo yako</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tabLogin" onclick="switchTab('login')">Ingia</button>
+    <button class="tab" id="tabRegister" onclick="switchTab('register')">Jisajili</button>
+  </div>
+
+  <div class="msg" id="msgBox"></div>
+
+  <form id="loginForm">
+    <div class="field">
+      <label>Barua pepe</label>
+      <input type="email" id="loginEmail" required placeholder="wewe@mfano.com">
+    </div>
+    <div class="field">
+      <label>Nenosiri</label>
+      <input type="password" id="loginPassword" required placeholder="••••••••">
+    </div>
+    <button type="submit" class="submit" id="loginBtn">Ingia</button>
+  </form>
+
+  <form id="registerForm" class="hidden">
+    <div class="field">
+      <label>Jina Kamili</label>
+      <input type="text" id="regName" required placeholder="Jina lako">
+    </div>
+    <div class="field">
+      <label>Barua pepe</label>
+      <input type="email" id="regEmail" required placeholder="wewe@mfano.com">
+    </div>
+    <div class="field">
+      <label>Namba ya Simu</label>
+      <input type="tel" id="regPhone" required placeholder="+255 7XX XXX XXX">
+    </div>
+    <div class="field">
+      <label>Nenosiri</label>
+      <input type="password" id="regPassword" required placeholder="Angalau herufi 6" minlength="6">
+    </div>
+    <button type="submit" class="submit" id="registerBtn">Jisajili</button>
+  </form>
+
+  <a href="index.html" class="back">← Rudi kwenye ukurasa mkuu</a>
+</div>
+
+<!-- Firebase SDK (compat, works via plain script tags) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyVQAVigdVwp1jNWtLm6V-RAjiI-Kd9dg",
+    authDomain: "mascol-tracking.firebaseapp.com",
+    projectId: "mascol-tracking",
+    storageBucket: "mascol-tracking.firebasestorage.app",
+    messagingSenderId: "228918300879",
+    appId: "1:228918300879:web:04f09b0b78f10def8827ba",
+    measurementId: "G-MMR9MB76ZQ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  function switchTab(which){
+    const isLogin = which === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+    document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+    document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+    document.getElementById('heading').textContent = isLogin ? 'Karibu tena' : 'Fungua akaunti';
+    document.getElementById('subheading').textContent = isLogin ? 'Ingia kufuatilia mizigo yako' : 'Jisajili kufuatilia mizigo yako MASCOL';
+    hideMsg();
+  }
+
+  function showMsg(text, type){
+    const box = document.getElementById('msgBox');
+    box.textContent = text;
+    box.className = 'msg ' + type;
+  }
+  function hideMsg(){
+    const box = document.getElementById('msgBox');
+    box.className = 'msg';
+  }
+
+  // Ikiwa mtu tayari ameingia, mpeleke moja kwa moja kwenye track.html
+  auth.onAuthStateChanged(function(user){
+    if(user){ window.location.href = 'track.html'; }
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    hideMsg();
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Inaingia...';
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function(){ window.location.href = 'track.html'; })
+      .catch(function(err){
+        btn.disabled = false; btn.textContent = 'Ingia';
+        showMsg(translateError(err.code), 'error');
+      });
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    hideMsg();
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true; btn.textContent = 'Inasajili...';
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(function(cred){
+        return db.collection('users').doc(cred.user.uid).set({
+          name: name,
+          email: email,
+          phone: phone,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      })
+      .then(function(){ window.location.href = 'track.html'; })
+      .catch(function(err){
+        btn.disabled = false; btn.textContent = 'Jisajili';
+        showMsg(translateError(err.code), 'error');
+      });
+  });
+
+  function translateError(code){
+    const map = {
+      'auth/email-already-in-use': 'Barua pepe hii tayari inatumika. Jaribu kuingia.',
+      'auth/invalid-email': 'Barua pepe si sahihi.',
+      'auth/weak-password': 'Nenosiri ni fupi mno, angalau herufi 6.',
+      'auth/user-not-found': 'Akaunti haipo. Jisajili kwanza.',
+      'auth/wrong-password': 'Nenosiri si sahihi.',
+      'auth/invalid-credential': 'Barua pepe au nenosiri si sahihi.',
+      'auth/too-many-requests': 'Majaribio mengi. Subiri kidogo kisha jaribu tena.'
+    };
+    return map[code] || 'Hitilafu imetokea. Jaribu tena.';
+  }
+</script>
+</body>
+</html>

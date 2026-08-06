@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — MASCOL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg-deep:#0B0D12;
+    --bg-panel:#14171F;
+    --line:#232733;
+    --orange:#FF6A1A;
+    --orange-dim:rgba(255,106,26,0.12);
+    --green:#4ED890;
+    --text-primary:#F2F3F5;
+    --text-muted:#8890A0;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--bg-deep); color:var(--text-primary); font-family:'Space Grotesk', sans-serif; min-height:100vh; }
+
+  header{ display:flex; align-items:center; justify-content:space-between; padding:18px 6vw; border-bottom:1px solid var(--line); }
+  .brand{ display:flex; align-items:center; gap:8px; }
+  .brand-mark{ width:26px; height:26px; border-radius:6px; background:var(--orange); display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:12px; color:#0B0D12; }
+  .brand-name{ font-weight:700; font-size:15px; }
+  .brand-name .tag{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--orange); margin-left:8px; letter-spacing:0.08em; }
+  .userbox{ display:flex; align-items:center; gap:14px; }
+  .userbox span{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-muted); }
+  .logout{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--orange); background:none; border:1px solid var(--orange); border-radius:20px; padding:6px 14px; cursor:pointer; }
+  .logout:hover{ background:var(--orange); color:#0B0D12; }
+
+  main{ max-width:920px; margin:0 auto; padding:44px 6vw 80px; }
+  h1{ font-size:24px; font-weight:700; margin-bottom:24px; }
+
+  .panel{ background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:26px; margin-bottom:28px; }
+  .panel h2{ font-size:14px; font-weight:700; margin-bottom:18px; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .field label{ display:block; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--bg-deep); border:1px solid var(--line); border-radius:8px;
+    padding:10px 12px; color:var(--text-primary); font-family:'Space Grotesk', sans-serif; font-size:13.5px; outline:none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--orange); }
+  .field.full{ grid-column:1 / -1; }
+
+  button.submit{
+    margin-top:16px; background:var(--orange); color:#0B0D12; border:none; border-radius:8px;
+    padding:11px 22px; font-weight:700; font-size:13.5px; cursor:pointer;
+  }
+  button.submit:hover{ background:#FF7E38; }
+  button.submit:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-family:'IBM Plex Mono', monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); padding:10px 8px; border-bottom:1px solid var(--line); }
+  td{ padding:12px 8px; border-bottom:1px solid var(--line); font-size:13px; }
+  td.mono{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-muted); }
+  select.status-select{ background:var(--bg-deep); border:1px solid var(--line); color:var(--text-primary); border-radius:6px; padding:6px 8px; font-family:'IBM Plex Mono', monospace; font-size:11px; }
+
+  .msg{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; padding:10px 12px; border-radius:7px; margin-bottom:16px; display:none; }
+  .msg.error{ display:block; background:rgba(255,80,60,0.1); color:#FF6B5A; border:1px solid rgba(255,80,60,0.25); }
+  .msg.success{ display:block; background:rgba(78,216,144,0.1); color:var(--green); border:1px solid rgba(78,216,144,0.25); }
+
+  .gate{ min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; text-align:center; padding:24px; }
+  .gate p{ color:var(--text-muted); font-size:13.5px; max-width:340px; }
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <div class="brand-mark" style="width:40px;height:40px;font-size:18px;">M</div>
+  <p id="gateText">Inathibitisha ufikiaji wa admin...</p>
+</div>
+
+<div id="adminApp" style="display:none;">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-name">MASCOL <span class="tag">ADMIN</span></div>
+    </div>
+    <div class="userbox">
+      <span id="userEmail"></span>
+      <button class="logout" onclick="doLogout()">Toka</button>
+    </div>
+  </header>
+
+  <main>
+    <h1>Simamia Mizigo</h1>
+
+    <div class="panel">
+      <h2>+ Ongeza Mzigo Mpya</h2>
+      <div class="msg" id="addMsg"></div>
+      <form id="addForm">
+        <div class="grid">
+          <div class="field">
+            <label>Tracking Number</label>
+            <input type="text" id="fTrack" required placeholder="MSC-2026-0042">
+          </div>
+          <div class="field">
+            <label>Barua Pepe ya Mteja</label>
+            <input type="email" id="fEmail" required placeholder="mteja@mfano.com">
+          </div>
+          <div class="field">
+            <label>Kutoka</label>
+            <input type="text" id="fOrigin" required placeholder="Dar es Salaam">
+          </div>
+          <div class="field">
+            <label>Kwenda</label>
+            <input type="text" id="fDest" required placeholder="Machame, Moshi">
+          </div>
+          <div class="field full">
+            <label>Maelezo ya Mzigo</label>
+            <input type="text" id="fDesc" placeholder="mfano: Vifaa vya ujenzi, tani 2">
+          </div>
+        </div>
+        <button type="submit" class="submit" id="addBtn">Ongeza Mzigo</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Mizigo Yote</h2>
+      <table>
+        <thead>
+          <tr><th>Tracking #</th><th>Mteja</th><th>Njia</th><th>Status</th></tr>
+        </thead>
+        <tbody id="shipmentsTable">
+          <tr><td colspan="4" class="mono">Inapakia...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyVQAVigdVwp1jNWtLm6V-RAjiI-Kd9dg",
+    authDomain: "mascol-tracking.firebaseapp.com",
+    projectId: "mascol-tracking",
+    storageBucket: "mascol-tracking.firebasestorage.app",
+    messagingSenderId: "228918300879",
+    appId: "1:228918300879:web:04f09b0b78f10def8827ba",
+    measurementId: "G-MMR9MB76ZQ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // ⚠️ BADILISHA HAPA: weka barua pepe zako (na za wafanyakazi wenye ruhusa ya admin)
+  const ADMIN_EMAILS = [
+    "wewe@rawasenmunisi.com"
+  ];
+
+  const STAGES = [
+    { key:'received', label:'Imepokelewa' },
+    { key:'in_transit', label:'Njiani' },
+    { key:'delivered', label:'Imefika' }
+  ];
+
+  auth.onAuthStateChanged(function(user){
+    if(!user){
+      window.location.href = 'login.html';
+      return;
+    }
+    if(ADMIN_EMAILS.indexOf(user.email) === -1){
+      document.getElementById('gateText').textContent = 'Huna ruhusa ya kuingia hapa. Ukurasa huu ni wa admin pekee.';
+      return;
+    }
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    document.getElementById('userEmail').textContent = user.email;
+    loadShipments();
+  });
+
+  function doLogout(){
+    auth.signOut().then(function(){ window.location.href = 'login.html'; });
+  }
+
+  document.getElementById('addForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const btn = document.getElementById('addBtn');
+    btn.disabled = true; btn.textContent = 'Inaongeza...';
+    const track = document.getElementById('fTrack').value.trim();
+
+    const data = {
+      trackingNumber: track,
+      customerEmail: document.getElementById('fEmail').value.trim(),
+      origin: document.getElementById('fOrigin').value.trim(),
+      destination: document.getElementById('fDest').value.trim(),
+      description: document.getElementById('fDesc').value.trim(),
+      status: 'received',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('shipments').doc(track).set(data)
+      .then(function(){
+        showAddMsg('Mzigo umeongezwa: ' + track, 'success');
+        document.getElementById('addForm').reset();
+        loadShipments();
+      })
+      .catch(function(err){
+        showAddMsg('Imeshindikana kuongeza mzigo. Jaribu tena.', 'error');
+      })
+      .finally(function(){
+        btn.disabled = false; btn.textContent = 'Ongeza Mzigo';
+      });
+  });
+
+  function showAddMsg(text, type){
+    const box = document.getElementById('addMsg');
+    box.textContent = text;
+    box.className = 'msg ' + type;
+  }
+
+  function loadShipments(){
+    db.collection('shipments').orderBy('createdAt', 'desc').get()
+      .then(function(snap){
+        const tbody = document.getElementById('shipmentsTable');
+        if(snap.empty){
+          tbody.innerHTML = '<tr><td colspan="4" class="mono">Hakuna mzigo bado.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = '';
+        snap.forEach(function(doc){
+          const s = doc.data();
+          const tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td class="mono">' + escapeHtml(s.trackingNumber) + '</td>' +
+            '<td>' + escapeHtml(s.customerEmail || '—') + '</td>' +
+            '<td>' + escapeHtml(s.origin || '?') + ' → ' + escapeHtml(s.destination || '?') + '</td>' +
+            '<td></td>';
+          const select = document.createElement('select');
+          select.className = 'status-select';
+          STAGES.forEach(function(st){
+            const opt = document.createElement('option');
+            opt.value = st.key; opt.textContent = st.label;
+            if(st.key === s.status) opt.selected = true;
+            select.appendChild(opt);
+          });
+          select.addEventListener('change', function(){
+            updateStatus(doc.id, select.value);
+          });
+          tr.children[3].appendChild(select);
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(function(){
+        document.getElementById('shipmentsTable').innerHTML = '<tr><td colspan="4" class="mono">Hitilafu ya kupakia mizigo.</td></tr>';
+      });
+  }
+
+  function updateStatus(trackingId, newStatus){
+    db.collection('shipments').doc(trackingId).update({
+      status: newStatus,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>
